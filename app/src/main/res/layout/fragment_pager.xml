@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/details_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:layout_margin="?attr/actionBarSize"
+        android:background="@drawable/shape"
+        android:gravity="center"
+        android:padding="@dimen/fab_margin"
+        android:shadowColor="@color/black"
+        android:shadowDx="-1"
+        android:shadowDy="-1"
+        android:shadowRadius="1"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textColor="@android:color/white"
+        android:fontFamily="sans-serif-thin" />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

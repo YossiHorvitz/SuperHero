@@ -1,0 +1,19 @@
+package com.user.superhero.api
+
+import retrofit2.Call
+import retrofit2.http.GET
+import retrofit2.http.Path
+
+interface APIService {
+
+    companion object {
+        private const val ACCESS_KEY = "3881543648526468"
+        const val BASE_URL = "https://superheroapi.com/api/$ACCESS_KEY/"
+    }
+
+    @GET("search/{query}")
+    fun searchHero(@Path("query") query: String): Call<APIResponse>
+
+    @GET("{id}")
+    fun getHeroById(@Path("id") id: String): Call<APIResponse.Results>
+}

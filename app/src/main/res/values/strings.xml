@@ -1,8 +1,39 @@
 <resources>
     <string name="app_name">Super Hero</string>
-    <string name="action_settings">Settings</string>
-    <!-- Strings used for fragments for navigation -->
-    <string name="first_fragment_label">First Fragment</string>
-    <string name="second_fragment_label">Second Fragment</string>
+    <string name="action_git">Git</string>
+    <string name="action_search">Search</string>
+    <string name="action_share">Share</string>
+    <string name="hero_name">Hero name: %s\n</string>
+    <string name="gender">Gender: %s\n</string>
+    <string name="strength">Strength - %s</string>
+
+    <string name="loading">OK, Wait a sec...</string>
+    <string name="search_hint">You can search a hero by tapping\non the search icon at the corner</string>
+    <string name="no_results">No results found, try another hero.</string>
+
+
+    <string name="bio">
+        Full name: %1s\n
+        Alter egos: %2s\n
+        Place of birth: %3s
+    </string>
+
+    <string name="appearance">
+        Gender: %1s\n
+        Height: %2s\n
+        weight: %3s
+    </string>
+
+    <string name="power">
+        Power: %1s\n
+        Speed: %2s\n
+        Strength: %3s
+    </string>
+
+    <string-array name="hero_attr_names">
+        <item>Bio</item>
+        <item>Appearance</item>
+        <item>Power</item>
+    </string-array>
 
 </resources>
