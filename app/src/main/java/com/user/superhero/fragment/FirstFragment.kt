@@ -8,7 +8,6 @@ import androidx.appcompat.widget.SearchView
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.google.android.material.snackbar.Snackbar
@@ -48,7 +47,7 @@ class FirstFragment : Fragment(R.layout.fragment_first), SuperHeroAdapter.OnItem
             recyclerView.adapter = adapter
             recyclerView.addItemDecoration(GridSpacingItemDecoration(spanCount, spacing = 25, includeEdge = true))
 
-            viewModel.list.observe(viewLifecycleOwner, Observer {
+            viewModel.list.observe(viewLifecycleOwner, {
                 val result = if (it.response == "success") it.results else emptyList()
                 list = result
                 adapter.list = result
@@ -60,9 +59,10 @@ class FirstFragment : Fragment(R.layout.fragment_first), SuperHeroAdapter.OnItem
                 }
             })
 
-            viewModel.showProgress.observe(viewLifecycleOwner, Observer {
+            viewModel.showProgress.observe(viewLifecycleOwner, {
                 if (it) {
                     adapter.list = emptyList()
+                    adapter.notifyDataSetChanged()
 
                     loading_text_view.text = getString(R.string.loading)
                     loading_text_view.visibility = View.VISIBLE
@@ -94,7 +94,6 @@ class FirstFragment : Fragment(R.layout.fragment_first), SuperHeroAdapter.OnItem
             override fun onQueryTextSubmit(query: String?): Boolean {
 
                 if (query != null) {
-                    binding.recyclerView.smoothScrollToPosition(0)
                     viewModel.searchHero(query)
                     searchView.clearFocus()
                 }
