@@ -1,6 +1,8 @@
-package com.user.superhero.api
+package com.user.superhero.network
 
+import com.user.superhero.data.APIResponse
 import retrofit2.Call
+import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path
 
@@ -12,7 +14,7 @@ interface APIService {
     }
 
     @GET("search/{query}")
-    fun searchHero(@Path("query") query: String): Call<APIResponse>
+    suspend fun searchHero(@Path("query") query: String): Response<APIResponse>
 
     @GET("{id}")
     fun getHeroById(@Path("id") id: String): Call<APIResponse.Results>

@@ -1,4 +1,4 @@
-package com.user.superhero.adapter
+package com.user.superhero.adapters
 
 import android.view.LayoutInflater
 import android.view.View
@@ -10,7 +10,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.user.superhero.R
-import com.user.superhero.api.APIResponse
+import com.user.superhero.data.APIResponse
 import kotlinx.android.synthetic.main.list_item.view.*
 
 class SuperHeroAdapter(
@@ -24,11 +24,13 @@ class SuperHeroAdapter(
     }
 
     override fun onBindViewHolder(holder: ExampleViewHolder, position: Int) {
-        val hero = list[position]
+        holder.apply {
+            val hero = list[position]
 
-        holder.heroName.text = hero.name
-        holder.labelImageView.visibility = if (position == 0) View.VISIBLE else View.GONE
-        loadImage(holder.imageView, hero.image.url)
+            heroName.text = hero.name
+            labelImageView.visibility = if (position == 0) View.VISIBLE else View.GONE
+            imageView.loadImage(hero.image.url)
+        }
     }
 
     override fun getItemCount() = list.size
@@ -53,13 +55,13 @@ class SuperHeroAdapter(
     /**
      * load hero image
      * */
-    private fun loadImage(image: ImageView, url: String) {
-        Glide.with(image.context)
+    private fun ImageView.loadImage(url: String) {
+        Glide.with(context)
             .load(url)
             .centerCrop()
             .transition(DrawableTransitionOptions.withCrossFade())
             .diskCacheStrategy(DiskCacheStrategy.DATA)
-            .into(image)
+            .into(this)
     }
 
     interface OnItemClickListener {

@@ -1,4 +1,4 @@
-package com.user.superhero.fragment
+package com.user.superhero.ui.fragments
 
 import android.animation.ArgbEvaluator
 import android.animation.ValueAnimator
@@ -23,8 +23,8 @@ import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.google.android.material.tabs.TabLayoutMediator
 import com.user.superhero.R
-import com.user.superhero.adapter.ViewPagerAdapter
-import com.user.superhero.api.APIResponse
+import com.user.superhero.adapters.ViewPagerAdapter
+import com.user.superhero.data.APIResponse
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_details.*
 import java.io.File
@@ -40,7 +40,7 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
         const val imageName: String = "temp.jpg"
     }
 
-    lateinit var hero: APIResponse.Results
+    private lateinit var hero: APIResponse.Results
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

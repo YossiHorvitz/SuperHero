@@ -1,4 +1,4 @@
-package com.user.superhero.api
+package com.user.superhero.data
 
 import android.os.Parcelable
 import com.google.gson.annotations.SerializedName

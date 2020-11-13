@@ -1,10 +1,10 @@
-package com.user.superhero.fragment
+package com.user.superhero.ui.fragments
 
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
 import com.user.superhero.R
-import com.user.superhero.api.APIResponse
+import com.user.superhero.data.APIResponse
 import kotlinx.android.synthetic.main.fragment_pager.*
 
 class FragmentPager : Fragment(R.layout.fragment_pager) {

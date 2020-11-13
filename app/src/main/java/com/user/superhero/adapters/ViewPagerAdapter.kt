@@ -1,10 +1,10 @@
-package com.user.superhero.adapter
+package com.user.superhero.adapters
 
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import com.user.superhero.api.APIResponse
-import com.user.superhero.fragment.FragmentPager
+import com.user.superhero.data.APIResponse
+import com.user.superhero.ui.fragments.FragmentPager
 
 class ViewPagerAdapter(
     activity: AppCompatActivity,

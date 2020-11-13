@@ -1,15 +1,15 @@
-package com.user.superhero.view_model
+package com.user.superhero.viewmodel
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
-import com.user.superhero.SuperHeroApplication
-import com.user.superhero.api.APIResponse
+import com.user.superhero.data.APIResponse
+import com.user.superhero.network.Repository
 import java.util.*
 
 class HeroViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val repository = SuperHeroApplication()
+    private val repository = Repository()
     val showProgress: LiveData<Boolean>
     val list: LiveData<APIResponse>
 
@@ -18,7 +18,7 @@ class HeroViewModel(application: Application) : AndroidViewModel(application) {
         this.showProgress = repository.showProgress
     }
 
-    fun searchHero(query: String) {
+    suspend fun searchHero(query: String) {
         repository.searchHero(query)
     }
 

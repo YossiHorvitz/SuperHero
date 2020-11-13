@@ -1,4 +1,4 @@
-package com.user.superhero
+package com.user.superhero.ui
 
 import android.content.res.Configuration
 import android.os.Bundle
@@ -8,7 +8,8 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
-import com.user.superhero.fragment.DetailsFragment.Companion.imageName
+import com.user.superhero.R
+import com.user.superhero.ui.fragments.DetailsFragment.Companion.imageName
 import java.io.File
 
 class MainActivity : AppCompatActivity() {

@@ -1,4 +1,4 @@
-package com.user.superhero.fragment
+package com.user.superhero.ui.fragments
 
 import android.os.Bundle
 import android.view.Menu
@@ -8,18 +8,20 @@ import androidx.appcompat.widget.SearchView
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.google.android.material.snackbar.Snackbar
-import com.user.superhero.MainActivity.Companion.isTablet
-import com.user.superhero.MainActivity.Companion.isLandscape
+import com.user.superhero.ui.MainActivity.Companion.isTablet
+import com.user.superhero.ui.MainActivity.Companion.isLandscape
 import com.user.superhero.R
-import com.user.superhero.adapter.SuperHeroAdapter
-import com.user.superhero.api.APIResponse
+import com.user.superhero.adapters.SuperHeroAdapter
+import com.user.superhero.data.APIResponse
 import com.user.superhero.databinding.FragmentFirstBinding
-import com.user.superhero.ui.GridSpacingItemDecoration
-import com.user.superhero.view_model.HeroViewModel
+import com.user.superhero.utils.GridSpacingItemDecoration
+import com.user.superhero.viewmodel.HeroViewModel
 import kotlinx.android.synthetic.main.fragment_first.*
+import kotlinx.coroutines.launch
 
 class FirstFragment : Fragment(R.layout.fragment_first), SuperHeroAdapter.OnItemClickListener {
 
@@ -92,9 +94,10 @@ class FirstFragment : Fragment(R.layout.fragment_first), SuperHeroAdapter.OnItem
         searchView.maxWidth = Int.MAX_VALUE
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
-
                 if (query != null) {
-                    viewModel.searchHero(query)
+                    viewModel.viewModelScope.launch {
+                        viewModel.searchHero(query)
+                    }
                     searchView.clearFocus()
                 }
                 return true
