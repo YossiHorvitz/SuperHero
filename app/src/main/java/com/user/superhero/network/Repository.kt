@@ -24,18 +24,16 @@ class Repository : CoroutineScope by MainScope() {
 
         val service = retrofit.create(APIService::class.java)
 
-
-            launch(Dispatchers.IO) {
-                try {
-                    val response = service.searchHero(query)
-                    if (response.isSuccessful && response.body() != null) {
-                        list.postValue(response.body())
-                    }
-                } catch (e: Exception) {
-                    e.printStackTrace()
+        launch(Dispatchers.IO) {
+            try {
+                val response = service.searchHero(query)
+                if (response.isSuccessful && response.body() != null) {
+                    list.postValue(response.body())
                 }
-                showProgress.postValue(false)
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
-
+            showProgress.postValue(false)
+        }
     }
 }
