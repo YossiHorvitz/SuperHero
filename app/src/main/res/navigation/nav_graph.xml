@@ -19,5 +19,11 @@
         android:id="@+id/SecondFragment"
         android:name="com.user.superhero.ui.fragments.DetailsFragment"
         android:label=""
-        tools:layout="@layout/fragment_details" />
+        tools:layout="@layout/fragment_details">
+        <argument
+            android:name="hero"
+            android:defaultValue="@null"
+            app:argType="com.user.superhero.data.Hero"
+            app:nullable="true" />
+    </fragment>
 </navigation>

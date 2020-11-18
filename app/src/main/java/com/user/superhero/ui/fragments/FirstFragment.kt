@@ -5,7 +5,6 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.View
 import androidx.appcompat.widget.SearchView
-import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.viewModelScope
@@ -16,21 +15,21 @@ import com.user.superhero.ui.MainActivity.Companion.isTablet
 import com.user.superhero.ui.MainActivity.Companion.isLandscape
 import com.user.superhero.R
 import com.user.superhero.adapters.SuperHeroAdapter
-import com.user.superhero.data.APIResponse
+import com.user.superhero.data.Hero
 import com.user.superhero.databinding.FragmentFirstBinding
 import com.user.superhero.utils.GridSpacingItemDecoration
 import com.user.superhero.viewmodel.HeroViewModel
 import kotlinx.android.synthetic.main.fragment_first.*
 import kotlinx.coroutines.launch
 
-class FirstFragment : Fragment(R.layout.fragment_first), SuperHeroAdapter.OnItemClickListener {
+class FirstFragment : Fragment(R.layout.fragment_first){
 
     private var _binding: FragmentFirstBinding? = null
     private val binding get() = _binding!!
     private val viewModel by viewModels<HeroViewModel>()
 
-    private var list: List<APIResponse.Results> = emptyList()
-    private val adapter = SuperHeroAdapter(list, this)
+    private var list: List<Hero> = emptyList()
+    private val adapter = createAdapter()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -38,49 +37,54 @@ class FirstFragment : Fragment(R.layout.fragment_first), SuperHeroAdapter.OnItem
 
         _binding = FragmentFirstBinding.bind(view)
 
-        binding.apply {
+        setupRecyclerView()
 
-            val spanCount =
-                if (isTablet) {
-                    if (isLandscape) 4 else 3
-                } else if (isLandscape) 3 else 2
+        viewModel.list.observe(viewLifecycleOwner, {
+            val result = if (it.response == "success") it.results else emptyList()
+            list = result
+            adapter.list = result
 
-            recyclerView.layoutManager = GridLayoutManager(activity, spanCount)
-            recyclerView.adapter = adapter
-            recyclerView.addItemDecoration(GridSpacingItemDecoration(spanCount, spacing = 25, includeEdge = true))
+            adapter.notifyDataSetChanged()
 
-            viewModel.list.observe(viewLifecycleOwner, {
-                val result = if (it.response == "success") it.results else emptyList()
-                list = result
-                adapter.list = result
+            if (list.isEmpty())
+                Snackbar.make(binding.root, getString(R.string.no_results), Snackbar.LENGTH_LONG).show()
+        })
 
+        viewModel.showProgress.observe(viewLifecycleOwner, {
+            if (it) {
+                adapter.list = emptyList()
                 adapter.notifyDataSetChanged()
 
-                if (list.isEmpty()) {
-                    Snackbar.make(root, getString(R.string.no_results), Snackbar.LENGTH_LONG).show()
-                }
-            })
+                loading_text_view.text = getString(R.string.loading)
+                loading_text_view.visibility = View.VISIBLE
+                loading_image.visibility = View.VISIBLE
+            } else {
+                loading_text_view.visibility = View.GONE
+                loading_image.visibility = View.GONE
+            }
+        })
+    }
 
-            viewModel.showProgress.observe(viewLifecycleOwner, {
-                if (it) {
-                    adapter.list = emptyList()
-                    adapter.notifyDataSetChanged()
-
-                    loading_text_view.text = getString(R.string.loading)
-                    loading_text_view.visibility = View.VISIBLE
-                    loading_image.visibility = View.VISIBLE
-                } else {
-                    loading_text_view.visibility = View.GONE
-                    loading_image.visibility = View.GONE
-                }
-            })
+    private fun createAdapter(): SuperHeroAdapter {
+        return SuperHeroAdapter(list) { _, hero ->
+            val action = FirstFragmentDirections.actionFirstFragmentToSecondFragment(hero)
+            findNavController().navigate(action)
         }
     }
 
-    override fun onItemClick(position: Int) {
-        val hero = list[position]
-        val bundle = bundleOf("hero" to hero)
-        findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment, bundle)
+    private fun setupRecyclerView() {
+        binding.apply {
+            recyclerView.layoutManager = GridLayoutManager(activity, getSpanCount())
+            recyclerView.adapter = adapter
+            recyclerView.setHasFixedSize(true)
+            recyclerView.addItemDecoration(GridSpacingItemDecoration(getSpanCount(), spacing = 25, includeEdge = true))
+        }
+    }
+
+    private fun getSpanCount(): Int {
+        return if (isTablet)
+            if (isLandscape) 4 else 3
+        else if (isLandscape) 3 else 2
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -88,8 +92,7 @@ class FirstFragment : Fragment(R.layout.fragment_first), SuperHeroAdapter.OnItem
 
         inflater.inflate(R.menu.menu_main, menu)
 
-        val searchItem = menu.findItem(R.id.action_search)
-        val searchView = searchItem.actionView as SearchView
+        val searchView = menu.findItem(R.id.action_search).actionView as SearchView
 
         searchView.maxWidth = Int.MAX_VALUE
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {

@@ -6,16 +6,14 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.user.superhero.R
-import com.user.superhero.data.APIResponse
+import com.user.superhero.data.Hero
+import com.user.superhero.utils.extensions.load
 import kotlinx.android.synthetic.main.list_item.view.*
 
 class SuperHeroAdapter(
-    var list: List<APIResponse.Results>,
-    private val listener: OnItemClickListener
+    var list: List<Hero>,
+    private val listener: ((view: View, hero: Hero?) -> Unit)? = null
 ) : RecyclerView.Adapter<SuperHeroAdapter.ExampleViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ExampleViewHolder {
@@ -29,47 +27,22 @@ class SuperHeroAdapter(
 
             heroName.text = hero.name
             labelImageView.visibility = if (position == 0) View.VISIBLE else View.GONE
-            imageView.loadImage(hero.image.url)
+            with(imageView) {
+                load(hero.image.url) {
+                    listener?.let {
+                        if (position != RecyclerView.NO_POSITION)
+                            it(this, hero)
+                    }
+                }
+            }
         }
     }
 
     override fun getItemCount() = list.size
 
-    inner class ExampleViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
+    inner class ExampleViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val labelImageView: ImageView = itemView.label_image_view
         val imageView: ImageView = itemView.image_view
         val heroName: TextView = itemView.hero_name_text_view
-
-        init {
-            itemView.setOnClickListener(this)
-        }
-
-        override fun onClick(v: View?) {
-            val position = adapterPosition
-            if (position != RecyclerView.NO_POSITION) {
-                listener.onItemClick(position)
-            }
-        }
-    }
-
-    /**
-     * load hero image
-     * */
-    private fun ImageView.loadImage(url: String) {
-        Glide.with(context)
-            .load(url)
-            .centerCrop()
-            .transition(DrawableTransitionOptions.withCrossFade())
-            .diskCacheStrategy(DiskCacheStrategy.DATA)
-            .into(this)
-    }
-
-    interface OnItemClickListener {
-
-        /**
-         * call when item was clicked
-         * @param position item position in the list
-         * */
-        fun onItemClick(position: Int)
     }
 }

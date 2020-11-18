@@ -9,7 +9,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import com.user.superhero.R
-import com.user.superhero.ui.fragments.DetailsFragment.Companion.imageName
+import com.user.superhero.utils.Constants.IMAGE_NAME
 import java.io.File
 
 class MainActivity : AppCompatActivity() {
@@ -47,9 +47,9 @@ class MainActivity : AppCompatActivity() {
 
     /**
      * delete temp file if left behind
-     * @see com.user.superhero.fragment.DetailsFragment.imageName
+     * @see com.user.superhero.utils.Constants.IMAGE_NAME
      * */
     private fun deleteTempFile() {
-        File(getExternalFilesDir(null), imageName).delete()
+        File(getExternalFilesDir(null), IMAGE_NAME).delete()
     }
 }

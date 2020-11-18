@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.graphics.drawable.toBitmap
+import androidx.navigation.fragment.navArgs
 import androidx.palette.graphics.Palette
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
@@ -24,39 +25,27 @@ import com.bumptech.glide.request.target.Target
 import com.google.android.material.tabs.TabLayoutMediator
 import com.user.superhero.R
 import com.user.superhero.adapters.ViewPagerAdapter
-import com.user.superhero.data.APIResponse
+import com.user.superhero.data.Hero
+import com.user.superhero.utils.Constants.GIT_URL
+import com.user.superhero.utils.Constants.IMAGE_NAME
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_details.*
 import java.io.File
 import java.io.FileOutputStream
-import java.io.OutputStream
+import java.io.IOException
 
 class DetailsFragment : Fragment(R.layout.fragment_details) {
 
-    companion object {
-        /**
-         * default image name saved to a file
-         * */
-        const val imageName: String = "temp.jpg"
-    }
-
-    private lateinit var hero: APIResponse.Results
+    private lateinit var hero: Hero
+    private val args = navArgs<DetailsFragmentArgs>()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setHasOptionsMenu(true)
 
-        hero = arguments?.getParcelable("hero")!!
-        (activity as AppCompatActivity).supportActionBar?.title = hero.name
-        loadImage(hero.image.url)
-
-        val heroNameArray = resources.getStringArray(R.array.hero_attr_names)
-        val viewPagerAdapter = ViewPagerAdapter(activity as AppCompatActivity, hero, 3)
-        view_pager.adapter = viewPagerAdapter
-
-        TabLayoutMediator(tabLayout, view_pager) { tab, position ->
-            tab.text = heroNameArray[position].substringBefore(' ')
-        }.attach()
+        initHeroArguments()
+        setupViewPager()
+        setupTabLayout()
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -68,7 +57,7 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             0 -> {
-                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/YossiHorvitz/SuperHero")))
+                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(GIT_URL)))
                 true
             }
 
@@ -80,86 +69,85 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
         }
     }
 
-    private fun loadImage(url: String) {
-        Glide.with(this)
-            .load(url)
-            .centerCrop()
-            .transition(DrawableTransitionOptions.withCrossFade())
-            .diskCacheStrategy(DiskCacheStrategy.DATA)
-            .listener(object : RequestListener<Drawable> {
-                override fun onLoadFailed(
-                    e: GlideException?,
-                    model: Any?,
-                    target: Target<Drawable>?,
-                    isFirstResource: Boolean
-                ): Boolean {
-                    return false
-                }
-
-                override fun onResourceReady(
-                    resource: Drawable?,
-                    model: Any?,
-                    target: Target<Drawable>?,
-                    dataSource: DataSource?,
-                    isFirstResource: Boolean
-                ): Boolean {
-                    val bitmap = resource?.toBitmap()
-                    bitmap?.let { applyPalette(it) }
-                    saveImage(resource)
-                    return false
-                }
-
-                /**
-                 * change toolbar and status bar color
-                 * */
-                private fun applyPalette(bitmap: Bitmap) {
-                    Palette.from(bitmap).generate { palette ->
-                        val toolbar = (activity as AppCompatActivity).toolbar
-                        val window = (activity as AppCompatActivity).window
-
-                        var color = palette?.getDarkVibrantColor(R.attr.colorAccent)
-
-                        // this color not affect the color result well
-                        if (color == 2130968748)
-                            color = ContextCompat.getColor(requireContext(), R.color.purple_500)
-
-                        val colorAnimation = ValueAnimator.ofObject(ArgbEvaluator(), window.statusBarColor, color)
-
-                        colorAnimation.addUpdateListener { animator ->
-                            toolbar.setBackgroundColor(animator.animatedValue as Int)
-                            window.statusBarColor = animator.animatedValue as Int
-                        }
-                        colorAnimation.start()
-                    }
-                }
-
-            }).into(hero_image)
-    }
-
-    /**
-     * save the image to internal storage in order to share it later
-     * */
-    private fun saveImage(resource: Drawable?) {
-        val bitmap = resource?.toBitmap()
-
-        val file = File(requireContext().getExternalFilesDir(null), imageName)
-        file.createNewFile()
-
-        val os: OutputStream
-        try {
-            os = FileOutputStream(file)
-            bitmap!!.compress(Bitmap.CompressFormat.JPEG, 50, os)
-            os.flush()
-            os.close()
-        } catch (ignore: Exception) {
+    private fun initHeroArguments() {
+        hero = args.value.hero!!.apply {
+            (activity as AppCompatActivity).supportActionBar?.title = name
+            loadImage(image.url)
         }
     }
 
-    /**
-     * share a hero image and some other information
-     * */
-    private fun shareHeroDetails(hero: APIResponse.Results) {
-        val file = File(requireContext().getExternalFilesDir(null), imageName)
+    private fun setupViewPager() {
+        val viewPagerAdapter = ViewPagerAdapter(activity as AppCompatActivity, hero, itemsCount = 3)
+        view_pager.adapter = viewPagerAdapter
+    }
+
+    private fun setupTabLayout() {
+        TabLayoutMediator(tabLayout, view_pager) { tab, position ->
+            val heroNameArray = resources.getStringArray(R.array.hero_attr_names)
+            tab.text = heroNameArray[position].substringBefore(' ')
+        }.attach()
+    }
+
+    private fun loadImage(url: String) {
+        hero_image.apply {
+            Glide.with(this@DetailsFragment)
+                .load(url)
+                .centerCrop()
+                .transition(DrawableTransitionOptions.withCrossFade())
+                .diskCacheStrategy(DiskCacheStrategy.DATA)
+                .listener(object : RequestListener<Drawable> {
+                    override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
+                        return false
+                    }
+
+                    override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
+                        val bitmap = resource?.toBitmap().apply { saveImage(resource) }
+                        bitmap?.let { applyPalette(it) }
+                        return false
+                    }
+
+                    /** change toolbar and status bar color */
+                    private fun applyPalette(bitmap: Bitmap) {
+                        Palette.from(bitmap).generate { palette ->
+                            val window = (activity as AppCompatActivity).window
+                            var color = palette?.getDarkVibrantColor(R.attr.colorAccent)
+
+                            if (color == 2130968748) // this color not affect the color result well
+                                color = ContextCompat.getColor(requireContext(), R.color.purple_500)
+
+                            ValueAnimator.ofObject(ArgbEvaluator(), window.statusBarColor, color)
+                                .apply {
+                                    addUpdateListener { animator ->
+                                        (activity as AppCompatActivity).toolbar.setBackgroundColor(animator.animatedValue as Int)
+                                        window.statusBarColor = animator.animatedValue as Int
+                                    }
+                                    start()
+                                }
+                        }
+                    }
+                }).into(this)
+        }
+    }
+
+    /** save the image to internal storage in order to share it later */
+    private fun saveImage(resource: Drawable?) {
+        val bitmap = resource?.toBitmap()
+
+        val file = File(requireContext().getExternalFilesDir(null), IMAGE_NAME)
+        file.createNewFile()
+
+        try {
+            FileOutputStream(file).use { out ->
+                bitmap?.compress(Bitmap.CompressFormat.JPEG, 50, out)
+            }
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+    }
+
+    /** share a hero image and some other information */
+    private fun shareHeroDetails(hero: Hero) {
+        val file = File(requireContext().getExternalFilesDir(null), IMAGE_NAME)
 
         if (file.exists()) {
             val uri = FileProvider.getUriForFile(

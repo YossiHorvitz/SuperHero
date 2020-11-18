@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
 import com.user.superhero.R
-import com.user.superhero.data.APIResponse
+import com.user.superhero.data.Hero
 import kotlinx.android.synthetic.main.fragment_pager.*
 
 class FragmentPager : Fragment(R.layout.fragment_pager) {
@@ -12,7 +12,7 @@ class FragmentPager : Fragment(R.layout.fragment_pager) {
     companion object {
         const val ARG_POSITION = "position"
 
-        fun getInstance(position: Int, hero: APIResponse.Results): Fragment {
+        fun getInstance(position: Int, hero: Hero): Fragment {
             val fragment = FragmentPager()
             val args = Bundle()
             args.putInt(ARG_POSITION, position)
@@ -24,7 +24,7 @@ class FragmentPager : Fragment(R.layout.fragment_pager) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val position = requireArguments().getInt(ARG_POSITION)
-        val hero = requireArguments().getParcelable<APIResponse.Results>("hero")!!
+        val hero = requireArguments().getParcelable<Hero>("hero")!!
 
         details_text_view.apply {
             when (position) {

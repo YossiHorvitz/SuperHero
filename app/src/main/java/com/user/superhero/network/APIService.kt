@@ -17,5 +17,5 @@ interface APIService {
     suspend fun searchHero(@Path("query") query: String): Response<APIResponse>
 
     @GET("{id}")
-    fun getHeroById(@Path("id") id: String): Call<APIResponse.Results>
+    fun getHeroById(@Path("id") id: String): Call<APIResponse>
 }

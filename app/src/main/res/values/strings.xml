@@ -31,7 +31,7 @@
     </string>
 
     <string-array name="hero_attr_names">
-        <item>Bio</item>
+        <item>Bio -</item>
         <item>Appearance</item>
         <item>Power</item>
     </string-array>
