@@ -10,8 +10,10 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import com.user.superhero.R
 import com.user.superhero.utils.Constants.IMAGE_NAME
+import dagger.hilt.android.AndroidEntryPoint
 import java.io.File
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     companion object {
@@ -26,14 +28,18 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         setSupportActionBar(findViewById(R.id.toolbar))
 
+        setupNavController()
+
+        isTablet = resources.getBoolean(R.bool.is_tablet)
+        isLandscape = resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+    }
+
+    private fun setupNavController() {
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         navController = navHostFragment.findNavController()
 
         val appBarConfiguration = AppBarConfiguration(navController.graph)
         setupActionBarWithNavController(navController, appBarConfiguration)
-
-        isTablet = resources.getBoolean(R.bool.is_tablet)
-        isLandscape = resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
     }
 
     override fun onSupportNavigateUp(): Boolean {

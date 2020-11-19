@@ -7,9 +7,10 @@
     <string name="gender">Gender: %s\n</string>
     <string name="strength">Strength - %s</string>
 
-    <string name="loading">OK, Wait a sec...</string>
+    <string name="loading">OK, Working on it...</string>
     <string name="search_hint">You can search a hero by tapping\non the search icon at the corner</string>
     <string name="no_results">No results found, try another hero.</string>
+    <string name="suggestions">Show suggestions</string>
 
 
     <string name="bio">

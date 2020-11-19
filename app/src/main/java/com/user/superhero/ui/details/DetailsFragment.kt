@@ -1,4 +1,4 @@
-package com.user.superhero.ui.fragments
+package com.user.superhero.ui.details
 
 import android.animation.ArgbEvaluator
 import android.animation.ValueAnimator
@@ -7,19 +7,22 @@ import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
-import android.view.*
-import androidx.fragment.app.Fragment
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.graphics.drawable.toBitmap
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
 import androidx.palette.graphics.Palette
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.engine.GlideException
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.google.android.material.tabs.TabLayoutMediator
@@ -93,7 +96,7 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
             Glide.with(this@DetailsFragment)
                 .load(url)
                 .centerCrop()
-                .transition(DrawableTransitionOptions.withCrossFade())
+                .transition(withCrossFade())
                 .diskCacheStrategy(DiskCacheStrategy.DATA)
                 .listener(object : RequestListener<Drawable> {
                     override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
@@ -101,28 +104,33 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
                     }
 
                     override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
-                        val bitmap = resource?.toBitmap().apply { saveImage(resource) }
-                        bitmap?.let { applyPalette(it) }
+                        resource?.toBitmap().let {
+                            saveImage(it)
+                            applyPalette(it)
+                        }
                         return false
                     }
-
                     /** change toolbar and status bar color */
-                    private fun applyPalette(bitmap: Bitmap) {
-                        Palette.from(bitmap).generate { palette ->
-                            val window = (activity as AppCompatActivity).window
-                            var color = palette?.getDarkVibrantColor(R.attr.colorAccent)
+                    private fun applyPalette(bitmap: Bitmap?) {
+                        bitmap?.let {
+                            Palette.from(it).generate { palette ->
+                                val window = (activity as AppCompatActivity).window
 
-                            if (color == 2130968748) // this color not affect the color result well
-                                color = ContextCompat.getColor(requireContext(), R.color.purple_500)
-
-                            ValueAnimator.ofObject(ArgbEvaluator(), window.statusBarColor, color)
-                                .apply {
-                                    addUpdateListener { animator ->
-                                        (activity as AppCompatActivity).toolbar.setBackgroundColor(animator.animatedValue as Int)
-                                        window.statusBarColor = animator.animatedValue as Int
-                                    }
-                                    start()
+                                val color = when (palette?.getDarkVibrantColor(R.attr.colorAccent)) {
+                                    // this color not affect the color result well
+                                    2130968748 -> ContextCompat.getColor(requireContext(), R.color.purple_500)
+                                    else -> palette?.getDarkVibrantColor(R.attr.colorAccent)
                                 }
+
+                                ValueAnimator.ofObject(ArgbEvaluator(), window.statusBarColor, color)
+                                    .apply {
+                                        addUpdateListener { animator ->
+                                            (activity as AppCompatActivity).toolbar.setBackgroundColor(animator.animatedValue as Int)
+                                            window.statusBarColor = animator.animatedValue as Int
+                                        }
+                                        start()
+                                    }
+                            }
                         }
                     }
                 }).into(this)
@@ -130,9 +138,7 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
     }
 
     /** save the image to internal storage in order to share it later */
-    private fun saveImage(resource: Drawable?) {
-        val bitmap = resource?.toBitmap()
-
+    private fun saveImage(bitmap: Bitmap?) {
         val file = File(requireContext().getExternalFilesDir(null), IMAGE_NAME)
         file.createNewFile()
 

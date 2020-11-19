@@ -1,16 +1,17 @@
 package com.user.superhero.viewmodel
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
+import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.ViewModel
 import com.user.superhero.data.APIResponse
-import com.user.superhero.network.Repository
+import com.user.superhero.network.SearchRepo
 
-class HeroViewModel(application: Application) : AndroidViewModel(application) {
+class SearchViewModel @ViewModelInject constructor(
+    private val repository: SearchRepo
+) : ViewModel() {
 
-    private val repository = Repository()
-    val showProgress: LiveData<Boolean>
     val list: LiveData<APIResponse>
+    val showProgress: LiveData<Boolean>
 
     init {
         this.list = repository.list

@@ -22,7 +22,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@color/white"
-            android:orientation="vertical"
+            android:orientation="horizontal"
             android:padding="@dimen/fab_margin">
 
             <ImageView
@@ -31,26 +31,34 @@
                 android:layout_gravity="center"
                 android:background="@drawable/ic_wallpaper" />
 
-            <TextView
-                android:id="@+id/loading_text_view"
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:fontFamily="sans-serif-thin"
-                android:gravity="center"
-                android:text="@string/search_hint"
-                android:textSize="22sp" />
+                android:orientation="vertical">
 
-            <Button
-                android:id="@+id/suggestion_button"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_margin="@dimen/fab_margin"
-                android:text="@string/suggestions"
-                android:textAllCaps="false"
-                android:visibility="gone" />
+                <TextView
+                    android:id="@+id/loading_text_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:fontFamily="sans-serif-thin"
+                    android:gravity="center"
+                    android:text="@string/search_hint"
+                    android:textSize="22sp" />
+
+                <Button
+                    android:id="@+id/suggestion_button"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_margin="@dimen/fab_margin"
+                    android:text="@string/suggestions"
+                    android:textAllCaps="false"
+                    android:visibility="gone" />
+
+            </LinearLayout>
 
         </LinearLayout>
 

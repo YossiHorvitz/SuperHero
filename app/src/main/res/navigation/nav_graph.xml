@@ -7,17 +7,20 @@
 
     <fragment
         android:id="@+id/FirstFragment"
-        android:name="com.user.superhero.ui.fragments.FirstFragment"
+        android:name="com.user.superhero.ui.main.FirstFragment"
         android:label="@string/app_name"
         tools:layout="@layout/fragment_first">
-
         <action
             android:id="@+id/action_FirstFragment_to_SecondFragment"
-            app:destination="@id/SecondFragment" />
+            app:destination="@id/SecondFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
     </fragment>
     <fragment
         android:id="@+id/SecondFragment"
-        android:name="com.user.superhero.ui.fragments.DetailsFragment"
+        android:name="com.user.superhero.ui.details.DetailsFragment"
         android:label=""
         tools:layout="@layout/fragment_details">
         <argument

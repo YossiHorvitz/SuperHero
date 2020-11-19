@@ -7,7 +7,7 @@ import kotlinx.android.parcel.Parcelize
 @Parcelize
 data class APIResponse(
     val response: String,
-    val results: List<Hero>
+    val results: ArrayList<Hero>
 ) : Parcelable {
 
     @Parcelize

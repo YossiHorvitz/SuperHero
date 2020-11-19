@@ -1,4 +1,4 @@
-package com.user.superhero.ui.fragments
+package com.user.superhero.ui
 
 import android.os.Bundle
 import android.view.View
