@@ -57,7 +57,7 @@ class FirstFragment : Fragment(R.layout.fragment_first){
 
     private fun setupRecyclerView() {
         binding.content.recyclerView.apply {
-            layoutManager = GridLayoutManager(activity, getSpanCount())
+            layoutManager = GridLayoutManager(context, getSpanCount())
             adapter = recyclerViewAdapter
             setHasFixedSize(true)
             addItemDecoration(GridSpacingItemDecoration(getSpanCount(), spacing = 10.dpToPx(), includeEdge = true))
