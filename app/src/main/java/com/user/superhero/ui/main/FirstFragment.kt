@@ -82,7 +82,7 @@ class FirstFragment : Fragment(R.layout.fragment_first){
 
         searchViewModel.showProgress.observe(viewLifecycleOwner, {
             binding.apply {
-                searchInfoCardView?.isVisible = it
+                searchInfoCardView.isVisible = it
                 loadingTextView.text = getString(R.string.loading)
                 suggestionButton.hide()
             }
