@@ -5,7 +5,6 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.View
 import androidx.appcompat.widget.SearchView
-import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.viewModelScope
@@ -14,7 +13,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.user.superhero.R
 import com.user.superhero.adapters.SuperHeroAdapter
-import com.user.superhero.databinding.FragmentFirstBinding
+import com.user.superhero.databinding.FragmentMainBinding
 import com.user.superhero.ui.MainActivity.Companion.isLandscape
 import com.user.superhero.ui.MainActivity.Companion.isTablet
 import com.user.superhero.utils.GridSpacingItemDecoration
@@ -27,21 +26,21 @@ import kotlinx.coroutines.launch
 import kotlin.random.Random
 
 @AndroidEntryPoint
-class FirstFragment : Fragment(R.layout.fragment_first){
+class MainFragment : Fragment(R.layout.fragment_main){
 
-    private var _binding: FragmentFirstBinding? = null
+    private var _binding: FragmentMainBinding? = null
     private val binding get() = _binding!!
 
     private val searchViewModel: SearchViewModel by viewModels()
-    private val suggestionViewModel by viewModels<SuggestionViewModel>()
+    private val suggestionViewModel: SuggestionViewModel by viewModels()
 
-    private val recyclerViewAdapter = createAdapter()
+    private val adapter = createAdapter()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setHasOptionsMenu(true)
 
-        _binding = FragmentFirstBinding.bind(view)
+        _binding = FragmentMainBinding.bind(view)
 
         setupRecyclerView()
         setupListeners()
@@ -50,7 +49,7 @@ class FirstFragment : Fragment(R.layout.fragment_first){
 
     private fun createAdapter(): SuperHeroAdapter {
         return SuperHeroAdapter { _, hero ->
-            val action = FirstFragmentDirections.actionFirstFragmentToSecondFragment(hero)
+            val action = MainFragmentDirections.actionMainFragmentToDetailsFragment(hero)
             findNavController().navigate(action)
         }
     }
@@ -58,7 +57,7 @@ class FirstFragment : Fragment(R.layout.fragment_first){
     private fun setupRecyclerView() {
         binding.content.recyclerView.apply {
             layoutManager = GridLayoutManager(context, getSpanCount())
-            adapter = recyclerViewAdapter
+            adapter = this@MainFragment.adapter
             setHasFixedSize(true)
             addItemDecoration(GridSpacingItemDecoration(getSpanCount(), spacing = 10.dpToPx(), includeEdge = true))
         }
@@ -77,12 +76,13 @@ class FirstFragment : Fragment(R.layout.fragment_first){
             if (it.results.isNullOrEmpty())
                 Snackbar.make(binding.root, getString(R.string.no_results), Snackbar.LENGTH_LONG).show()
             else
-                recyclerViewAdapter.submitList(it.results)
+                adapter.submitList(it.results)
         })
 
         searchViewModel.showProgress.observe(viewLifecycleOwner, {
             binding.apply {
-                searchInfoCardView.isVisible = it
+                content.recyclerView.animate().alpha(if (it) 0.15f else 1f).setDuration(500).start()
+                loadingLayout.animate().alpha(if (it) 1f else 0f).setDuration(500).start()
                 loadingTextView.text = getString(R.string.loading)
                 suggestionButton.hide()
             }
@@ -110,10 +110,10 @@ class FirstFragment : Fragment(R.layout.fragment_first){
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 if (query != null) {
+                    searchView.clearFocus()
                     searchViewModel.viewModelScope.launch {
                         searchViewModel.searchHero(query)
                     }
-                    searchView.clearFocus()
                 }
                 return true
             }

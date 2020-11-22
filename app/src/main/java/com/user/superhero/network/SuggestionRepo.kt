@@ -6,20 +6,16 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class SuggestionRepo : CoroutineScope by MainScope() {
+@Singleton
+class SuggestionRepo @Inject constructor(private val service: APIService) :
+    CoroutineScope by MainScope() {
 
     val list = MutableLiveData<Hero>()
 
     fun getHeroById(id: String) {
-        val retrofit = Retrofit.Builder()
-            .baseUrl(APIService.BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-
-        val service = retrofit.create(APIService::class.java)
 
         launch(Dispatchers.IO) {
             try {
