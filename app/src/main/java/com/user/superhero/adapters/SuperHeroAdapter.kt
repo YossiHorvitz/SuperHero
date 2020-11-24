@@ -12,7 +12,7 @@ import com.user.superhero.databinding.ListItemBinding
 import com.user.superhero.utils.extensions.load
 
 class SuperHeroAdapter(
-    private val listener: ((view: View, hero: Hero?) -> Unit)? = null
+    private val listener: ((view: View, hero: Hero) -> Unit)? = null
 ) : ListAdapter<Hero, SuperHeroAdapter.HeroViewHolder>(DiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HeroViewHolder {

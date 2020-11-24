@@ -40,7 +40,7 @@ import java.io.IOException
 class DetailsFragment : Fragment(R.layout.fragment_details) {
 
     private lateinit var hero: Hero
-    private val args = navArgs<DetailsFragmentArgs>()
+    private val args: DetailsFragmentArgs by navArgs()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -63,7 +63,6 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
                 startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(GIT_URL)))
                 true
             }
-
             1 -> {
                 shareHeroDetails(hero)
                 true
@@ -73,7 +72,7 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
     }
 
     private fun initHeroArguments() {
-        hero = args.value.hero!!.apply {
+        hero = args.hero.apply {
             (activity as AppCompatActivity).supportActionBar?.title = name
             loadImage(image.url)
         }
